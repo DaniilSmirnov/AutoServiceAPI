@@ -104,12 +104,48 @@ class AddOrder(Resource):
 
 class EditOrder(Resource):
     def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id_order', type=int)
+        parser.add_argument('client', type=int)
+        parser.add_argument('product', type=int)
+        parser.add_argument('date_time', type=str)
+        parser.add_argument('remark', type=str)
+        args = parser.parse_args()
+        _id_order = args['id_order']
+        _client = args['client']
+        _product = args['product']
+        _date_time = args['date_time']
+        _remark = args['remark']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "update orders set id_client = %s, id_product = %s, date_time = %s, remark = %s where id_order = %s;"
+        data = (_client, _product, _date_time, _remark, _id_order)
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+
+        return {'success': True}
         pass
 
 
 class CancelOrder(Resource):
     def post(self):
-        pass
+        parser = reqparse.RequestParser()
+        parser.add_argument('id_order', type=int)
+        args = parser.parse_args()
+        _id_order = args['id_order']
+
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "delete from orders where id_order =%s;"
+        data = (_id_order, )
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+
+        return {'success': True}
 
 
 class ApplyForView(Resource):
@@ -196,12 +232,50 @@ class AddContract(Resource):
 
 class EditContract(Resource):
     def post(self):
-        pass
+        parser = reqparse.RequestParser()
+        parser.add_argument('id_contract', type=int)
+        parser.add_argument('id_client', type=int)
+        parser.add_argument('id_car', type=int)
+        parser.add_argument('date_start', type=str)
+        parser.add_argument('date_end', type=str)
+        parser.add_argument('status', type=str)
+
+        args = parser.parse_args()
+        _id_contract = args['id_contract']
+        _id_client = args['id_client']
+        _id_car = args['id_car']
+        _date_start = args['date_start']
+        _date_end = args['date_end']
+        _status = args['status']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "update contract set id_client = %s, id_car = %s, date_start = %s, date_end = %s, status = %s where id_contract = %s;"
+        data = (_id_client, _id_car, _date_start, _date_end, _status, _id_contract)
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+
+        return {'success': True}
 
 
 class DeleteContract(Resource):
     def post(self):
-        pass
+        parser = reqparse.RequestParser()
+        parser.add_argument('id_contract', type=int)
+
+        args = parser.parse_args()
+        _id_contract = args['id_contract']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "delete from contract where id_contract = %s;"
+        data = (_id_contract, )
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+
+        return {'success': True}
 
 
 class Auth(Resource):
