@@ -30,7 +30,7 @@ limiter = Limiter(
 def get_cnx():
     cnx = mysql.connector.connect(user='root', password='misha_benich228',
                                   host='0.0.0.0',
-                                  database='meets')
+                                  database='car')
 
     return cnx
 
@@ -53,7 +53,7 @@ class GetOrders(Resource):
         cnx = get_cnx()
         cursor = cnx.cursor(buffered=True)
         query = "select * from orders where id_client = %s;"
-        data = (_client)
+        data = (_client, )
 
         response = []
         cursor.execute(query, data)
@@ -93,7 +93,7 @@ class AddOrder(Resource):
 
         cnx = get_cnx()
         cursor = cnx.cursor()
-        query = "insert into orders values (default, %s, %s %s, %s);"
+        query = "insert into orders values (default, %s, %s, %s, %s);"
         data = (_client, _product, _date_time, _remark)
         cursor.execute(query, data)
         cnx.commit()
@@ -318,7 +318,7 @@ class GetUsedServices(Resource):
 class AddService(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('client', type=int)
+        parser.add_argument('client', type=str)
         parser.add_argument('price', type=float)
         parser.add_argument('date_time', type=str)
         args = parser.parse_args()
@@ -328,7 +328,7 @@ class AddService(Resource):
 
         cnx = get_cnx()
         cursor = cnx.cursor()
-        query = "insert into work_type values (default, %s %s, %s);"
+        query = "insert into work_type values (default, %s, %s, %s);"
         data = (_name_work, _price, _date_time)
         cursor.execute(query, data)
         cnx.commit()
@@ -343,20 +343,22 @@ class DeleteService(Resource):
 
 
 class AddPart(Resource):
-    def post(self):
+    def get(self):
         parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int)
         parser.add_argument('name', type=str)
         parser.add_argument('price', type=float)
         parser.add_argument('guarantee', type=str)
         args = parser.parse_args()
+        _id = args['id']
         _name = args['name']
         _price = args['price']
         _guarantee = args['guarantee']
 
         cnx = get_cnx()
         cursor = cnx.cursor()
-        query = "insert into spares values (default, %s %s, %s);"
-        data = (_name, _price, _guarantee)
+        query = "insert into spares values (%s, %s, %s, %s);"
+        data = (_id, _name, _price, _guarantee)
         cursor.execute(query, data)
         cnx.commit()
         cnx.close()
@@ -365,8 +367,21 @@ class AddPart(Resource):
 
 
 class DeletePart(Resource):
-    def post(self):
-        pass
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int)
+        args = parser.parse_args()
+        _id = args['id']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "delete from spares where id_spare = %s;"
+        data = (_id,)
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+
+        return {'success': True}
 
 
 class GetParts(Resource):
@@ -454,7 +469,26 @@ class GetWorkers(Resource):
         cnx.close()
         return response
 
+api.add_resource(TestConnection, '/TestConnection')
+api.add_resource(GetOrders, '/GetOrders')
+api.add_resource(AddOrder, '/AddOrder')
+api.add_resource(EditOrder, '/EditOrder')
+api.add_resource(CancelOrder, '/CancelOrder')
+api.add_resource(ApplyForView, '/ApplyForView')
+api.add_resource(GetContracts, '/GetContracts')
+api.add_resource(AddContract, '/AddContract')
+api.add_resource(EditContract, '/EditContract')
+api.add_resource(DeleteContract, '/DeleteContract')
+api.add_resource(GetServices, '/GetServices')
+api.add_resource(GetUsedServices, '/GetUsedServices')
+api.add_resource(AddService, '/AddService')
+api.add_resource(DeleteService, '/DeleteService')
+api.add_resource(AddPart, '/AddPart')
+api.add_resource(DeletePart, '/DeletePart')
+api.add_resource(AddWorker, '/AddWorker')
+api.add_resource(GetWorkers, '/GetWorkers')
+api.add_resource(GetParts, '/GetParts')
 
 if __name__ == '__main__':
     context = ('/etc/ssl/vargasoff.ru.crt', '/etc/ssl/private.key')
-    app.run(host='0.0.0.0', port='8000', ssl_context=context)
+    app.run(host='0.0.0.0', port='2000', ssl_context=context)
