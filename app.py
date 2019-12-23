@@ -132,9 +132,9 @@ class EditOrder(Resource):
 class CancelOrder(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('id_order', type=int)
+        parser.add_argument('id', type=int)
         args = parser.parse_args()
-        _id_order = args['id_order']
+        _id_order = args['id']
 
 
         cnx = get_cnx()
@@ -262,10 +262,10 @@ class EditContract(Resource):
 class DeleteContract(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('id_contract', type=int)
+        parser.add_argument('id', type=int)
 
         args = parser.parse_args()
-        _id_contract = args['id_contract']
+        _id_contract = args['id']
 
         cnx = get_cnx()
         cursor = cnx.cursor()
@@ -338,8 +338,21 @@ class AddService(Resource):
 
 
 class DeleteService(Resource):
-    def post(self):
-        pass
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int)
+        args = parser.parse_args()
+        _id = args['id']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "delete from work_type where id_work_type = %s;"
+        data = (_id,)
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+
+        return {'success': True}
 
 
 class AddPart(Resource):
@@ -437,8 +450,21 @@ class AddWorker(Resource):
 
 
 class DeleteWorker(Resource):
-    def post(self):
-        pass
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int)
+        args = parser.parse_args()
+        _id = args['id']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "delete from employee where id_employee = %s;"
+        data = (_id,)
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+
+        return {'success': True}
 
 
 class GetWorkers(Resource):
