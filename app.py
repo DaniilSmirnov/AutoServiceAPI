@@ -78,6 +78,60 @@ class GetOrders(Resource):
         return response
 
 
+class AddCar(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int)
+        parser.add_argument('name', type=str)
+        parser.add_argument('model', type=str)
+        parser.add_argument('year', type=str)
+        parser.add_argument('reg', type=str)
+        parser.add_argument('remark', type=str)
+        args = parser.parse_args()
+        _id = args['id']
+        _name = args['name']
+        _model = args['model']
+        _year = args['year']
+        _reg = args['reg']
+        _remark= args['remark']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "insert into cars values (%s, %s, %s, %s, %s, %s);"
+        data = (_id, _name, _model, _year,_reg,_remark)
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+        return {'success': True}
+
+
+class AddClient(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int)
+        parser.add_argument('name', type=str)
+        parser.add_argument('surname', type=str)
+        parser.add_argument('phone', type=str)
+        parser.add_argument('email', type=str)
+        parser.add_argument('discount', type=str)
+        args = parser.parse_args()
+        _id = args['id']
+        _name = args['name']
+        _surname = args['surname']
+        _phone = args['phone']
+        _email = args['email']
+        _discount= args['discount']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "insert into clients values (%s, %s, %s, %s, %s, %s);"
+        data = (_id, _name, _surname, _phone,_email,_discount)
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+        return {'success': True}
+
+
 class AddOrder(Resource):
     def post(self):
         parser = reqparse.RequestParser()
@@ -203,30 +257,77 @@ class GetContracts(Resource):
 
 
 class AddContract(Resource):
-    def post(self):
+    def get(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('id_client', type=int)
+        parser.add_argument('id', type=int)
         parser.add_argument('id_car', type=int)
+        parser.add_argument('id_client', type=int)
         parser.add_argument('date_start', type=str)
         parser.add_argument('date_end', type=str)
         parser.add_argument('status', type=str)
-
-
         args = parser.parse_args()
-        _id_client = args['id_client']
+        _id = args['id']
         _id_car = args['id_car']
+        _id_client = args['id_client']
         _date_start = args['date_start']
         _date_end = args['date_end']
-        _status = args['status']
+        _status= args['status']
 
         cnx = get_cnx()
         cursor = cnx.cursor()
-        query = "insert into contract values (default, %s %s, %s, %s, %s);"
-        data = (_id_client, _id_car, _date_start, _date_end, _status)
+        query = "insert into contract values (%s, %s, %s, %s, %s, %s);"
+        data = (_id, _id_car, _id_client, _date_start, _date_end, _status)
         cursor.execute(query, data)
         cnx.commit()
         cnx.close()
+        return {'success': True}
 
+
+class AddContractws(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int)
+        parser.add_argument('id_contract', type=int)
+        parser.add_argument('id_work', type=int)
+        parser.add_argument('id_spare', type=int)
+        parser.add_argument('id_employee', type=int)
+        args = parser.parse_args()
+        _id = args['id']
+        _id_contract = args['id_contract']
+        _id_work = args['id_work']
+        _id_spare = args['id_spare']
+        _id_employee = args['id_employee']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "insert into contract_ws values (%s, %s, %s, %s, %s);"
+        data = (_id,_id_contract, _id_work, _id_spare,_id_employee)
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+        return {'success': True}
+
+
+class AddEntry(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int)
+        parser.add_argument('id_client', type=int)
+        parser.add_argument('id_car', type=str)
+        parser.add_argument('date', type=str)
+        args = parser.parse_args()
+        _id = args['id']
+        _id_client = args['id_client']
+        _id_car = args['id_car']
+        _date = args['date']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "insert into entry values (%s, %s, %s, %s);"
+        data = (_id, _id_client, _id_car, _date)
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
         return {'success': True}
 
 
@@ -495,6 +596,55 @@ class GetWorkers(Resource):
         cnx.close()
         return response
 
+
+class AddOrder(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int)
+        parser.add_argument('id_client', type=str)
+        parser.add_argument('id_product', type=str)
+        parser.add_argument('date_time', type=str)
+        parser.add_argument('remark', type=str)
+        args = parser.parse_args()
+        _id = args['id']
+        _id_client = args['id_client']
+        _id_product = args['id_product']
+        _date_time = args['date_time']
+        _remark = args['remark']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "insert into orders values (%s, %s, %s, %s, %s);"
+        data = (_id, _id_client, _id_product, _date_time,_remark)
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+        return {'success': True}
+
+
+class AddProduct(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int)
+        parser.add_argument('name', type=str)
+        parser.add_argument('price', type=float)
+        parser.add_argument('guarantee', type=str)
+        args = parser.parse_args()
+        _id = args['id']
+        _name = args['name']
+        _price = args['price']
+        _guarantee = args['guarantee']
+
+        cnx = get_cnx()
+        cursor = cnx.cursor()
+        query = "insert into product values (%s, %s, %s, %s);"
+        data = (_id, _name, _price, _guarantee)
+        cursor.execute(query, data)
+        cnx.commit()
+        cnx.close()
+        return {'success': True}
+
+
 api.add_resource(TestConnection, '/TestConnection')
 api.add_resource(GetOrders, '/GetOrders')
 api.add_resource(AddOrder, '/AddOrder')
@@ -514,6 +664,12 @@ api.add_resource(DeletePart, '/DeletePart')
 api.add_resource(AddWorker, '/AddWorker')
 api.add_resource(GetWorkers, '/GetWorkers')
 api.add_resource(GetParts, '/GetParts')
+api.add_resource(AddClient, '/AddClient')
+api.add_resource(AddCar, '/AddCar')
+api.add_resource(AddContractws, '/AddContractws')
+api.add_resource(AddProduct, '/AddProduct')
+api.add_resource(AddEntry, '/AddEntry')
+
 
 if __name__ == '__main__':
     context = ('/etc/ssl/vargasoff.ru.crt', '/etc/ssl/private.key')
