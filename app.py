@@ -578,12 +578,14 @@ class GetParts(Resource):
 class AddWorker(Resource):
     def post(self):
         parser = reqparse.RequestParser()
+        parser.add_argument('id', type=int)
         parser.add_argument('name', type=str)
         parser.add_argument('surname', type=str)
         parser.add_argument('phone', type=str)
         parser.add_argument('job_title', type=str)
 
         args = parser.parse_args()
+        _id = args['id']
         _name = args['name']
         _surname = args['surname']
         _phone = args['phone']
@@ -591,8 +593,8 @@ class AddWorker(Resource):
 
         cnx = get_cnx()
         cursor = cnx.cursor()
-        query = "insert into employee values (default, %s %s, %s, %s);"
-        data = (_name, _surname, _phone, _job_title)
+        query = "insert into employee values (%s, %s %s, %s, %s);"
+        data = (_id, _name, _surname, _phone, _job_title)
         cursor.execute(query, data)
         cnx.commit()
         cnx.close()
