@@ -97,12 +97,41 @@ class AddCar(Resource):
 
         cnx = get_cnx()
         cursor = cnx.cursor()
-        query = "insert into cars values (%s, %s, %s, %s, %s, %s);"
-        data = (_id, _name, _model, _year,_reg,_remark)
+        query = "insert into cars values (%s, %s, %s, %s, %s);"
+        data = (_id, _name, _model, _year, _remark)
         cursor.execute(query, data)
         cnx.commit()
         cnx.close()
         return {'success': True}
+
+
+class GetCars(Resource):
+    def get(self):
+        cnx = get_cnx()
+        cursor = cnx.cursor(buffered=True)
+        query = "select * from cars;"
+
+        response = []
+        cursor.execute(query)
+        for item in cursor:
+            i = 0
+            order = {}
+            for value in item:
+                if i == 0:
+                    order.update({'id_car': value})
+                if i == 1:
+                    order.update({'car_name': value})
+                if i == 2:
+                    order.update({'car_model': value})
+                if i == 3:
+                    order.update({'year': value})
+                if i == 4:
+                    order.update({'remark': value})
+                i += 1
+            response.append(order)
+        cursor.close()
+        cnx.close()
+        return response
 
 
 class AddClient(Resource):
@@ -130,6 +159,37 @@ class AddClient(Resource):
         cnx.commit()
         cnx.close()
         return {'success': True}
+
+
+class GetClients(Resource):
+    def get(self):
+        cnx = get_cnx()
+        cursor = cnx.cursor(buffered=True)
+        query = "select * from clients;"
+
+        response = []
+        cursor.execute(query)
+        for item in cursor:
+            i = 0
+            order = {}
+            for value in item:
+                if i == 0:
+                    order.update({'id_client': value})
+                if i == 1:
+                    order.update({'name': value})
+                if i == 2:
+                    order.update({'surname': value})
+                if i == 3:
+                    order.update({'phone': value})
+                if i == 4:
+                    order.update({'email': value})
+                if i == 5:
+                    order.update({'discount': value})
+                i += 1
+            response.append(order)
+        cursor.close()
+        cnx.close()
+        return response
 
 
 class AddOrder(Resource):
@@ -379,11 +439,6 @@ class DeleteContract(Resource):
         return {'success': True}
 
 
-class Auth(Resource):
-    def get(self):
-        pass
-
-
 class GetServices(Resource):
     def get(self):
         cnx = get_cnx()
@@ -409,11 +464,6 @@ class GetServices(Resource):
         cursor.close()
         cnx.close()
         return response
-
-
-class GetUsedServices(Resource):
-    def get(self):
-        pass
 
 
 class AddService(Resource):
@@ -656,7 +706,6 @@ api.add_resource(AddContract, '/AddContract')
 api.add_resource(EditContract, '/EditContract')
 api.add_resource(DeleteContract, '/DeleteContract')
 api.add_resource(GetServices, '/GetServices')
-api.add_resource(GetUsedServices, '/GetUsedServices')
 api.add_resource(AddService, '/AddService')
 api.add_resource(DeleteService, '/DeleteService')
 api.add_resource(AddPart, '/AddPart')
@@ -669,6 +718,8 @@ api.add_resource(AddCar, '/AddCar')
 api.add_resource(AddContractws, '/AddContractws')
 api.add_resource(AddProduct, '/AddProduct')
 api.add_resource(AddEntry, '/AddEntry')
+api.add_resource(GetCars, '/GetCars')
+api.add_resource(GetClients, '/GetClients')
 
 
 if __name__ == '__main__':
